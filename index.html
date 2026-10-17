@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вечер только для нас двоих — Карточки для разговоров по душам</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cormorant Garamond для поэтичной романтики и Montserrat для легкого чтения -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                    },
+                    colors: {
+                        romance: {
+                            cream: '#FDF8F5',
+                            blush: '#F9EBE8',
+                            rose: '#E8B4B8',
+                            deepRose: '#B86B77',
+                            wine: '#673147',
+                            darkWine: '#431D2C',
+                            gold: '#D4AF37',
+                            softGold: '#F3E5AB',
+                            card: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FDF8F5;
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(249, 219, 223, 0.55) 0px, transparent 50%),
+                radial-gradient(at 85% 25%, rgba(245, 230, 211, 0.5) 0px, transparent 50%),
+                radial-gradient(at 50% 85%, rgba(232, 180, 184, 0.35) 0px, transparent 55%);
+            background-attachment: fixed;
+            color: #431D2C;
+        }
+
+        /* Тонкое золотисто-розовое свечение карточек */
+        .romantic-card {
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(232, 180, 184, 0.45);
+            box-shadow: 0 12px 35px -8px rgba(103, 49, 71, 0.06), 0 4px 12px -2px rgba(212, 175, 55, 0.05);
+            transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .romantic-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(184, 107, 119, 0.65);
+            box-shadow: 0 22px 45px -12px rgba(103, 49, 71, 0.13), 0 0 25px 0 rgba(243, 229, 171, 0.35);
+        }
+
+        /* Подсветка случайной карточки в сетке */
+        .highlight-glow {
+            animation: pulseGlow 2.4s ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 12px 35px -8px rgba(103, 49, 71, 0.06);
+            }
+            35%, 65% {
+                transform: scale(1.02);
+                border-color: #B86B77;
+                box-shadow: 0 0 0 6px rgba(232, 180, 184, 0.35), 0 25px 50px -12px rgba(103, 49, 71, 0.25);
+            }
+        }
+
+        /* Плавное раскрытие примера ответа */
+        .answer-reveal {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, margin-top 0.35s ease;
+        }
+
+        .answer-reveal.open {
+            max-height: 260px;
+            opacity: 1;
+            margin-top: 1.15rem;
+        }
+
+        /* Декоративные мерцающие звездочки */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.25; transform: scale(0.9); }
+            50% { opacity: 0.85; transform: scale(1.1); }
+        }
+        .star-twinkle {
+            animation: twinkle 4s ease-in-out infinite;
+        }
+        .star-twinkle-delayed {
+            animation: twinkle 5.5s ease-in-out 2s infinite;
+        }
+
+        /* Скрытие полосы прокрутки для мобильных пилюль */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Плавная смена одиночной карточки */
+        .deck-fade {
+            animation: fadeSlide 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-romance-rose/40 selection:text-romance-darkWine relative overflow-x-hidden">
+
+    <!-- Нежная декоративная звездная пыль и свечения на фоне -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <svg class="absolute top-12 left-[10%] w-5 h-5 text-amber-400/50 star-twinkle" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+        </svg>
+        <svg class="absolute top-28 right-[14%] w-4 h-4 text-rose-400/40 star-twinkle-delayed" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+        </svg>
+        <svg class="absolute bottom-24 left-[18%] w-3.5 h-3.5 text-amber-500/35 star-twinkle-delayed" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+        </svg>
+        <svg class="absolute top-1/2 right-[8%] w-5 h-5 text-rose-300/50 star-twinkle" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+    </div>
+
+    <!-- Романтичная шапка -->
+    <header class="relative z-10 pt-12 pb-6 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+        <!-- Изящный разделитель с сердечком -->
+        <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/70 border border-romance-rose/50 shadow-sm mb-5">
+            <span class="text-rose-400 text-xs">✦</span>
+            <span class="text-[11px] uppercase tracking-[0.22em] text-romance-wine font-medium">Разговоры по душам</span>
+            <span class="text-rose-400 text-xs">✦</span>
+        </div>
+
+        <h1 class="font-serif text-4xl sm:text-6xl font-semibold text-romance-darkWine tracking-tight leading-tight">
+            Вечер только для нас двоих
+        </h1>
+
+        <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base text-romance-wine/80 font-light leading-relaxed">
+            Зажгите свечу, налейте что-нибудь тёплое и отложите телефоны. Здесь собраны нежные, ироничные, странные и глубокие вопросы, чтобы услышать друг друга по-новому и влюбиться ещё чуточку сильнее.
+        </p>
+
+        <!-- Тонкая декоративная линия -->
+        <div class="mt-7 flex items-center justify-center gap-4 opacity-70">
+            <div class="h-[1px] w-16 sm:w-28 bg-gradient-to-r from-transparent to-romance-rose"></div>
+            <span class="text-romance-deepRose text-sm">♥</span>
+            <div class="h-[1px] w-16 sm:w-28 bg-gradient-to-l from-transparent to-romance-rose"></div>
+        </div>
+    </header>
+
+    <!-- Элегантная панель: Табы категорий, переключатель вида и кнопка «Случайная карточка» -->
+    <section class="relative z-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full mb-8">
+        <div class="flex flex-col items-center gap-5">
+            
+            <!-- Табы-пилюли категорий -->
+            <div id="category-tabs" class="flex items-center justify-start sm:justify-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar w-full py-1 px-1">
+                <button onclick="selectCategory('all')" data-cat="all" class="cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-romance-wine text-white shadow-md shadow-romance-wine/20">
+                    ✨ Все карточки
+                </button>
+                <button onclick="selectCategory('romantic')" data-cat="romantic" class="cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 text-romance-wine border border-romance-rose/50 hover:bg-romance-blush/70">
+                    ❤️ Романтичные
+                </button>
+                <button onclick="selectCategory('funny')" data-cat="funny" class="cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 text-romance-wine border border-romance-rose/50 hover:bg-romance-blush/70">
+                    🥂 Смешные
+                </button>
+                <button onclick="selectCategory('deep')" data-cat="deep" class="cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 text-romance-wine border border-romance-rose/50 hover:bg-romance-blush/70">
+                    🌙 Глубокие
+                </button>
+                <button onclick="selectCategory('weird')" data-cat="weird" class="cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 text-romance-wine border border-romance-rose/50 hover:bg-romance-blush/70">
+                    🦋 Странные
+                </button>
+            </div>
+
+            <!-- Переключатель вида и кнопка «Случайная карточка» -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <!-- Переключатель режима отображения -->
+                <div class="inline-flex p-1 rounded-full bg-white/80 border border-romance-rose/50 shadow-sm">
+                    <button id="view-grid-btn" onclick="setViewMode('grid')" class="px-4 py-2 rounded-full text-xs font-medium transition-all bg-romance-blush text-romance-darkWine">
+                        Все карточки списком
+                    </button>
+                    <button id="view-single-btn" onclick="setViewMode('single')" class="px-4 py-2 rounded-full text-xs font-medium transition-all text-romance-wine/70 hover:text-romance-darkWine">
+                        По одной как в игре
+                    </button>
+                </div>
+
+                <!-- Кнопка случайной карточки -->
+                <button onclick="openRandomOverlay()" class="group inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-romance-deepRose to-romance-wine text-white text-xs sm:text-sm font-medium shadow-lg shadow-romance-deepRose/25 hover:shadow-romance-deepRose/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
+                    <span class="transition-transform duration-500 group-hover:rotate-45">✨</span>
+                    <span>Случайная карточка</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основная область карточек -->
+    <main class="relative z-10 flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        
+        <!-- РЕЖИМ 1: Сетка карточек (2-3 в ряд на десктопе, 1 на мобильном) -->
+        <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+            <!-- Карточки вставляются через JS -->
+        </div>
+
+        <!-- РЕЖИМ 2: Перелистывание по одной карточке -->
+        <div id="single-deck-view" class="hidden max-w-xl mx-auto pt-2">
+            <div id="single-card-container">
+                <!-- Одиночная карточка вставляется через JS -->
+            </div>
+
+            <!-- Навигация для одиночного режима -->
+            <div class="mt-8 flex items-center justify-between gap-4 px-2">
+                <button onclick="prevSingleCard()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/85 border border-romance-rose/60 text-romance-wine text-xs sm:text-sm font-medium hover:bg-romance-blush/60 transition shadow-sm">
+                    <span>←</span>
+                    <span>Предыдущая</span>
+                </button>
+
+                <span id="single-counter" class="font-serif italic text-lg text-romance-wine/80">
+                    1 из 36
+                </span>
+
+                <button onclick="nextSingleCard()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/85 border border-romance-rose/60 text-romance-wine text-xs sm:text-sm font-medium hover:bg-romance-blush/60 transition shadow-sm">
+                    <span>Следующая</span>
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Нежный романтичный футер -->
+    <footer class="relative z-10 py-10 text-center px-4 border-t border-romance-rose/30">
+        <p class="font-serif italic text-lg sm:text-xl text-romance-wine/80">
+            «Самое большое путешествие — это разговор, в котором не нужно спешить»
+        </p>
+        <div class="mt-2 text-xs text-romance-deepRose/70 tracking-widest uppercase">
+            ♥ Для уютных вечеров вдвоём ♥
+        </div>
+    </footer>
+
+    <!-- РОМАНТИЧНЫЙ ОВЕРЛЕЙ: Случайная карточка -->
+    <div id="random-overlay" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-romance-darkWine/45 backdrop-blur-md transition-opacity">
+        <div class="relative w-full max-w-lg rounded-[2rem] bg-gradient-to-b from-white via-romance-cream to-romance-blush/70 p-7 sm:p-10 shadow-2xl border border-romance-rose/60 text-center overflow-hidden">
+            
+            <!-- Декоративное угловое сияние -->
+            <div class="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-amber-200/30 blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-rose-300/30 blur-2xl pointer-events-none"></div>
+
+            <!-- Кнопка закрытия -->
+            <button onclick="closeRandomOverlay()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/80 border border-romance-rose/40 flex items-center justify-center text-romance-wine/70 hover:text-romance-darkWine hover:bg-white transition">
+                ✕
+            </button>
+
+            <!-- Метка категории в оверлее -->
+            <div id="overlay-badge" class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-medium mb-6">
+                <!-- Заполняется через JS -->
+            </div>
+
+            <!-- Вопрос крупным шрифтом -->
+            <div id="overlay-question-wrap" class="min-h-[130px] flex items-center justify-center px-2">
+                <h2 id="overlay-question" class="font-serif text-2xl sm:text-4xl font-semibold text-romance-darkWine leading-snug">
+                    <!-- Вопрос -->
+                </h2>
+            </div>
+
+            <!-- Кнопка и блок примера ответа -->
+            <div class="mt-6">
+                <button id="overlay-hint-btn" onclick="toggleOverlayHint()" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-romance-deepRose hover:text-romance-wine transition border-b border-dashed border-romance-rose pb-0.5">
+                    <span>✨</span>
+                    <span id="overlay-hint-label">Подсказка / Пример ответа</span>
+                </button>
+
+                <div id="overlay-hint-box" class="answer-reveal">
+                    <div class="p-4 sm:p-5 rounded-2xl bg-white/85 border border-romance-rose/40 font-serif italic text-lg sm:text-xl text-romance-wine leading-relaxed shadow-inner">
+                        <span id="overlay-example"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки внизу оверлея -->
+            <div class="mt-8 pt-5 border-t border-romance-rose/30 flex flex-wrap items-center justify-center gap-3">
+                <button onclick="drawRandomCard()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-romance-deepRose to-romance-wine text-white text-xs sm:text-sm font-medium shadow-md hover:shadow-lg transition">
+                    <span>✨ Вытянуть другую карточку</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Оформление категорий в нежной романтичной палитре
+        const CATEGORY_STYLES = {
+            romantic: {
+                label: 'Романтика',
+                icon: '❤️',
+                badge: 'bg-rose-100/80 text-rose-900 border border-rose-200'
+            },
+            funny: {
+                label: 'Смешное',
+                icon: '🥂',
+                badge: 'bg-amber-50/90 text-amber-900 border border-amber-200/80'
+            },
+            deep: {
+                label: 'Глубокое',
+                icon: '🌙',
+                badge: 'bg-purple-50/90 text-purple-950 border border-purple-200/80'
+            },
+            weird: {
+                label: 'Необычное',
+                icon: '🦋',
+                badge: 'bg-pink-50/90 text-rose-800 border border-pink-200/80'
+            }
+        };
+
+        // 36 неизбитых, романтичных, смешных, глубоких и необычных вопросов для мужа и жены
+        const QUESTIONS = [
+            {
+                id: 1,
+                category: 'deep',
+                question: 'Что для тебя настоящий ад на земле?',
+                example: '«Много машин и шумный город, где не слышно собственных мыслей и вечно нужно куда-то бежать».'
+            },
+            {
+                id: 2,
+                category: 'deep',
+                question: 'А как выглядит твой идеальный земной рай в самый обычный вторник?',
+                example: '«Утреннее солнце сквозь шторы, запах свежего кофе, тишина за окном и ощущение, что нам сегодня никуда не нужно спешить».'
+            },
+            {
+                id: 3,
+                category: 'romantic',
+                question: 'Какой самый неочевидный, бытовой момент со мной вызывает у тебя внезапный прилив нежности?',
+                example: '«Когда ты сонный(ая) стоишь на кухне в мятой футболке или очень сосредоточенно выбираешь вкусняшки к фильму».'
+            },
+            {
+                id: 4,
+                category: 'funny',
+                question: 'Если бы нас двоих арестовали без объяснения причин, как бы подумали наши друзья — за что именно?',
+                example: '«Тебя — за попытку увезти домой бездомного кота из чужого двора, а меня — за ожесточённый спор с навигатором».'
+            },
+            {
+                id: 5,
+                category: 'weird',
+                question: 'Если бы наша любовь была артхаусным фильмом со странным названием, как бы он назывался?',
+                example: '«Тайна исчезнувшего одеяла: том второй, в котором они снова заказали пиццу в полночь».'
+            },
+            {
+                id: 6,
+                category: 'romantic',
+                question: 'Если бы мы потеряли память, но оказались в нашей квартире — по какой одной детали ты бы понял(а), что мы очень любим друг друга?',
+                example: '«По двум любимым кружкам рядом у чайника и сотням глупых, но таких счастливых совместных фото в телефоне».'
+            },
+            {
+                id: 7,
+                category: 'funny',
+                question: 'Какая моя бытовая привычка сводила бы с ума любого другого человека, но ты к ней уже с улыбкой привык(ла)?',
+                example: '«Оставлять ровно один глоток чая на дне кружки или открывать все дверцы шкафчиков на кухне одновременно».'
+            },
+            {
+                id: 8,
+                category: 'deep',
+                question: 'О чём ты сильно тревожился(ась) до нашей встречи, а рядом со мной это перестало иметь значение?',
+                example: '«Раньше казалось важным всем нравиться и казаться идеальным(ой), а с тобой можно просто выдохнуть и быть собой».'
+            },
+            {
+                id: 9,
+                category: 'weird',
+                question: 'Если бы мы стали двумя добрыми привидениями в нашем доме, как бы мы подшучивали над новыми жильцами?',
+                example: '«Тихонько включали бы им романтичную музыку по вечерам и прятали второй носок из каждой пары».'
+            },
+            {
+                id: 10,
+                category: 'romantic',
+                question: 'Какой один наш совместный день ты бы с радостью поставил(а) на повтор в «Дне сурка»?',
+                example: '«Тот тёплый день в поездке, когда мы гуляли до заката без маршрута, смеялись до боли в щеках и ели мороженое».'
+            },
+            {
+                id: 11,
+                category: 'funny',
+                question: 'В каком совершенно бесполезном парном виде спорта мы бы с тобой легко взяли олимпийское золото?',
+                example: '«Синхронное выбирание фильма на вечер в течение полутора часов, чтобы в итоге уснуть на первых десяти минутах».'
+            },
+            {
+                id: 12,
+                category: 'deep',
+                question: 'Какую совершенно непрактичную мечту ты бы исполнил(а), если бы деньги вообще не имели значения?',
+                example: '«Открыть маленькую уютную книжную кофейню у моря, которая работает только тогда, когда у нас хорошее настроение».'
+            },
+            {
+                id: 13,
+                category: 'weird',
+                question: 'Если бы у тебя появился волшебный пульт от меня всего с одной новой кнопкой — что бы она делала?',
+                example: '«Кнопка "Мгновенно отключить рабочие мысли и включить режим объятий"».'
+            },
+            {
+                id: 14,
+                category: 'romantic',
+                question: 'В какой именно момент ты окончательно понял(а): «Вот с этим человеком я хочу встретить старость»?',
+                example: '«Когда мы попали в дурацкую бытовую передрягу, промокли до нитки, но вместо ссоры начали хохотать».'
+            },
+            {
+                id: 15,
+                category: 'funny',
+                question: 'Какими двумя чудаковатыми старичками мы с тобой станем в 85 лет?',
+                example: '«Будем сидеть на веранде в пледах, пить вишнёвую наливку и придумывать биографии случайным прохожим».'
+            },
+            {
+                id: 16,
+                category: 'deep',
+                question: 'Какое негласное правило нашей пары мы никогда специально не договаривались соблюдать, но оба бережно храним?',
+                example: '«Никогда не ложиться спать в обиде друг на друга и всегда обниматься при встрече в прихожей».'
+            },
+            {
+                id: 17,
+                category: 'weird',
+                question: 'Представь, что прилетели инопланетяне и попросили объяснить, кто я такой(ая), показав всего три предмета из дома. Что ты выберешь?',
+                example: '«Самый мягкий плед, начатую пачку вкусного шоколада и вечно запутанный провод от зарядки».'
+            },
+            {
+                id: 18,
+                category: 'romantic',
+                question: 'Когда ты чувствуешь себя максимально любимым(ой) без единого слова с моей стороны?',
+                example: '«Когда ты молча укрываешь меня одеялом, берёшь за руку на перекрёстке или оставляешь мне самый вкусный кусочек».'
+            },
+            {
+                id: 19,
+                category: 'funny',
+                question: 'Если бы наш холодильник умел разговаривать и дал интервью о нашей семье, о чём бы он рассказал в первую очередь?',
+                example: '«О том, как мы открываем его дверцу каждые пятнадцать минут с надеждой, что там само собой появилось что-то новенькое».'
+            },
+            {
+                id: 20,
+                category: 'deep',
+                question: 'Что в современном мире все вокруг считают нормой, а для тебя это какая-то странная суета?',
+                example: '«Постоянная гонка за успешным успехом, когда люди забывают просто посмотреть на закат или спокойно поужинать вдвоём».'
+            },
+            {
+                id: 21,
+                category: 'weird',
+                question: 'Если бы нам пришлось сбежать на край света под вымышленными именами, как бы нас звали и чем бы мы занимались?',
+                example: '«Леонард и Жозефина — владельцы крошечной пекарни с круассанами в сонном приморском городке».'
+            },
+            {
+                id: 22,
+                category: 'romantic',
+                question: 'Какую фразу или комплимент от меня ты до сих пор хранишь в памяти, хотя я мог(ла) сказать это случайно?',
+                example: '«Когда ты сказал(а), что рядом со мной ощущение дома возникает в любой точке мира».'
+            },
+            {
+                id: 23,
+                category: 'funny',
+                question: 'Если бы мы открыли семейный ресторанчик, какое одно странное фирменное блюдо было бы гвоздём меню?',
+                example: '«Ночной бутерброд из всего вкусного, что нашлось на второй полке, подаваемый строго в пижамах».'
+            },
+            {
+                id: 24,
+                category: 'deep',
+                question: 'В чём мы с тобой совсем не похожи, но именно эта противоположность делает наш союз таким гармоничным?',
+                example: '«Один из нас отвечает за спонтанные безумства и эмоции, а второй — за тёплый тыл, спокойствие и план действий».'
+            },
+            {
+                id: 25,
+                category: 'weird',
+                question: 'Если бы на один выходной мы поменялись телами, что бы ты сделал(а) в первые полчаса?',
+                example: '«Посмотрел(а) бы на себя твоими глазами в зеркало, чтобы понять, почему ты так тепло на меня улыбаешься».'
+            },
+            {
+                id: 26,
+                category: 'romantic',
+                question: 'Что во мне изменилось за время нашего брака в самую прекрасную сторону, чего я сам(а) не замечаю?',
+                example: '«В твоих глазах стало намного больше спокойствия, а смех стал совсем беззаботным и тёплым».'
+            },
+            {
+                id: 27,
+                category: 'funny',
+                question: 'Какая песня должна автоматически играть на фоне каждый раз, когда ты заходишь в комнату?',
+                example: '«Утром понедельника — драматичная симфония, а вечером пятницы — зажигательное итальянское диско».'
+            },
+            {
+                id: 28,
+                category: 'deep',
+                question: 'Если бы мы могли отправить короткую записку самим себе в день нашего первого свидания, что бы там было написано?',
+                example: '«Ни о чём не волнуйтесь и не стесняйтесь — это начало вашей самой любимой истории».'
+            },
+            {
+                id: 29,
+                category: 'weird',
+                question: 'Какая шуточная теория заговора кажется тебе подозрительно правдоподобной в нашей квартире?',
+                example: '«Что чайные ложки и резинки для волос ночью уходят через секретный портал в параллельное измерение».'
+            },
+            {
+                id: 30,
+                category: 'romantic',
+                question: 'Какое маленькое романтичное безумство нам стоит устроить в ближайший месяц просто так, без повода?',
+                example: '«Устроить свидание на парковке с горячим какао и видом на огни города или уехать встречать рассвет за город».'
+            },
+            {
+                id: 31,
+                category: 'funny',
+                question: 'Какую самую нелепую покупку ты когда-либо всерьёз хотел(а) совершить, но вовремя остановился(ась)?',
+                example: '«Огромное кресло-мешок размером с полкомнаты или аппарат для приготовления попкорна как в кинотеатре».'
+            },
+            {
+                id: 32,
+                category: 'deep',
+                question: 'Какой звук, запах или вкус мгновенно возвращает тебя в состояние абсолютного детского покоя?',
+                example: '«Запах летнего дождя по горячему асфальту, бабушкины яблочные оладьи и шум листвы за открытым окном».'
+            },
+            {
+                id: 33,
+                category: 'weird',
+                question: 'Если бы у нашей семьи был собственный герб, какие три забавных символа были бы на нём изображены?',
+                example: '«Две перекрещенные вилки над сковородкой, спящий кот и чемодан, готовый к внезапному отпуску».'
+            },
+            {
+                id: 34,
+                category: 'romantic',
+                question: 'Если бы нужно было описать вкус и аромат нашего с тобой счастья — на что бы он был похож?',
+                example: '«На тёплый круассан с корицей, морской бриз в отпуске и аромат твоих духов на моём шарфе».'
+            },
+            {
+                id: 35,
+                category: 'funny',
+                question: 'Кто из нас двоих дольше продержался бы на необитаемом острове и почему?',
+                example: '«Ты бы построил(а) шалаш с видом на океан, а я бы уже через час пытался(ась) подружиться с местными крабами».'
+            },
+            {
+                id: 36,
+                category: 'deep',
+                question: 'За что в нашей сегодняшней жизни ты чувствуешь самую тихую и глубокую благодарность?',
+                example: '«За то, что после любого сложного дня я возвращаюсь туда, где меня ждут, любят и понимают с полуслова».'
+            }
+        ];
+
+        // Состояние отображения
+        let currentCategory = 'all';
+        let viewMode = 'grid'; // 'grid' | 'single'
+        let singleIndex = 0;
+        let openAnswers = new Set();
+        let lastRandomId = null;
+
+        function getFilteredQuestions() {
+            if (currentCategory === 'all') return QUESTIONS;
+            return QUESTIONS.filter(q => q.category === currentCategory);
+        }
+
+        // Переключение категории
+        function selectCategory(cat) {
+            currentCategory = cat;
+            singleIndex = 0;
+
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                const isSelected = btn.getAttribute('data-cat') === cat;
+                if (isSelected) {
+                    btn.className = 'cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-romance-wine text-white shadow-md shadow-romance-wine/20';
+                } else {
+                    btn.className = 'cat-pill shrink-0 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 text-romance-wine border border-romance-rose/50 hover:bg-romance-blush/70';
+                }
+            });
+
+            renderView();
+        }
+
+        // Переключение режима: Сетка или По одной карточке
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridBtn = document.getElementById('view-grid-btn');
+            const singleBtn = document.getElementById('view-single-btn');
+            const gridContainer = document.getElementById('cards-grid');
+            const singleContainer = document.getElementById('single-deck-view');
+
+            if (mode === 'grid') {
+                gridBtn.className = 'px-4 py-2 rounded-full text-xs font-medium transition-all bg-romance-blush text-romance-darkWine shadow-sm';
+                singleBtn.className = 'px-4 py-2 rounded-full text-xs font-medium transition-all text-romance-wine/70 hover:text-romance-darkWine';
+                gridContainer.classList.remove('hidden');
+                singleContainer.classList.add('hidden');
+            } else {
+                singleBtn.className = 'px-4 py-2 rounded-full text-xs font-medium transition-all bg-romance-blush text-romance-darkWine shadow-sm';
+                gridBtn.className = 'px-4 py-2 rounded-full text-xs font-medium transition-all text-romance-wine/70 hover:text-romance-darkWine';
+                gridContainer.classList.add('hidden');
+                singleContainer.classList.remove('hidden');
+            }
+
+            renderView();
+        }
+
+        // Генерация HTML одной карточки
+        function createCardHTML(q, isLarge = false) {
+            const style = CATEGORY_STYLES[q.category] || CATEGORY_STYLES.romantic;
+            const isOpen = openAnswers.has(q.id);
+
+            return `
+                <article id="card-${q.id}" class="romantic-card rounded-[2rem] ${isLarge ? 'p-8 sm:p-12 text-center deck-fade' : 'p-6 sm:p-8'} flex flex-col justify-between relative overflow-hidden">
+                    
+                    <!-- Верхний декоративный блик -->
+                    <div class="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-rose-200/20 blur-xl pointer-events-none"></div>
+
+                    <div>
+                        <!-- Нежная метка категории -->
+                        <div class="flex items-center ${isLarge ? 'justify-center' : 'justify-between'} gap-2 mb-5">
+                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium ${style.badge}">
+                                <span>${style.icon}</span>
+                                <span>${style.label}</span>
+                            </span>
+                            ${!isLarge ? `<span class="font-serif italic text-sm text-romance-deepRose/60">№ ${q.id}</span>` : ''}
+                        </div>
+
+                        <!-- Сам нетипичный вопрос -->
+                        <h3 class="font-serif ${isLarge ? 'text-2xl sm:text-4xl my-4' : 'text-2xl sm:text-[26px]'} font-semibold text-romance-darkWine leading-snug">
+                            ${q.question}
+                        </h3>
+                    </div>
+
+                    <!-- Интерактивный элемент «Подсказка / Пример ответа» -->
+                    <div class="mt-7 pt-4 border-t border-romance-rose/30">
+                        <button onclick="toggleAnswer(${q.id})" class="group inline-flex items-center ${isLarge ? 'justify-center mx-auto' : 'justify-between w-full'} gap-2 text-xs sm:text-sm font-medium text-romance-deepRose hover:text-romance-wine transition">
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="text-amber-500 transition-transform duration-300 group-hover:scale-125">✦</span>
+                                <span id="btn-label-${q.id}">${isOpen ? 'Скрыть подсказку' : 'Подсказка / Пример ответа'}</span>
+                            </span>
+                            <span id="btn-arrow-${q.id}" class="text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}">↓</span>
+                        </button>
+
+                        <div id="answer-${q.id}" class="answer-reveal ${isOpen ? 'open' : ''}">
+                            <div class="p-4 rounded-2xl bg-romance-blush/55 border border-romance-rose/40 font-serif italic text-base sm:text-lg text-romance-wine leading-relaxed">
+                                Пример: ${q.example}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Отрисовка текущего вида
+        function renderView() {
+            const list = getFilteredQuestions();
+
+            if (viewMode === 'grid') {
+                const grid = document.getElementById('cards-grid');
+                grid.innerHTML = list.map(q => createCardHTML(q, false)).join('');
+            } else {
+                if (singleIndex >= list.length) singleIndex = 0;
+                if (singleIndex < 0) singleIndex = list.length - 1;
+
+                const container = document.getElementById('single-card-container');
+                const currentQ = list[singleIndex];
+                container.innerHTML = createCardHTML(currentQ, true);
+
+                document.getElementById('single-counter').textContent = `Карточка ${singleIndex + 1} из ${list.length}`;
+            }
+        }
+
+        // Раскрытие / закрытие примера ответа на карточке
+        function toggleAnswer(id) {
+            const answerEl = document.getElementById(`answer-${id}`);
+            const labelEl = document.getElementById(`btn-label-${id}`);
+            const arrowEl = document.getElementById(`btn-arrow-${id}`);
+
+            if (!answerEl) return;
+
+            if (openAnswers.has(id)) {
+                openAnswers.delete(id);
+                answerEl.classList.remove('open');
+                if (labelEl) labelEl.textContent = 'Подсказка / Пример ответа';
+                if (arrowEl) arrowEl.classList.remove('rotate-180');
+            } else {
+                openAnswers.add(id);
+                answerEl.classList.add('open');
+                if (labelEl) labelEl.textContent = 'Скрыть подсказку';
+                if (arrowEl) arrowEl.classList.add('rotate-180');
+            }
+        }
+
+        // Навигация в режиме одной карточки
+        function nextSingleCard() {
+            const list = getFilteredQuestions();
+            singleIndex = (singleIndex + 1) % list.length;
+            renderView();
+        }
+
+        function prevSingleCard() {
+            const list = getFilteredQuestions();
+            singleIndex = (singleIndex - 1 + list.length) % list.length;
+            renderView();
+        }
+
+        // Оверлей «Случайная карточка»
+        function openRandomOverlay() {
+            const overlay = document.getElementById('random-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            drawRandomCard();
+        }
+
+        function closeRandomOverlay() {
+            const overlay = document.getElementById('random-overlay');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+
+        function drawRandomCard() {
+            const pool = getFilteredQuestions();
+            let candidates = pool.length > 1 ? pool.filter(q => q.id !== lastRandomId) : pool;
+            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+            lastRandomId = chosen.id;
+
+            const style = CATEGORY_STYLES[chosen.category] || CATEGORY_STYLES.romantic;
+
+            const badge = document.getElementById('overlay-badge');
+            badge.className = `inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-medium mb-6 ${style.badge}`;
+            badge.innerHTML = `<span>${style.icon}</span><span>${style.label}</span>`;
+
+            const qEl = document.getElementById('overlay-question');
+            qEl.textContent = chosen.question;
+
+            const exEl = document.getElementById('overlay-example');
+            exEl.textContent = `Пример: ${chosen.example}`;
+
+            // Скрываем подсказку при вытягивании новой карточки
+            const hintBox = document.getElementById('overlay-hint-box');
+            const hintLabel = document.getElementById('overlay-hint-label');
+            hintBox.classList.remove('open');
+            hintLabel.textContent = 'Подсказка / Пример ответа';
+        }
+
+        function toggleOverlayHint() {
+            const hintBox = document.getElementById('overlay-hint-box');
+            const hintLabel = document.getElementById('overlay-hint-label');
+
+            if (hintBox.classList.contains('open')) {
+                hintBox.classList.remove('open');
+                hintLabel.textContent = 'Подсказка / Пример ответа';
+            } else {
+                hintBox.classList.add('open');
+                hintLabel.textContent = 'Скрыть подсказку';
+            }
+        }
+
+        // Закрытие оверлея по клику на фон или клавише Escape
+        document.getElementById('random-overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'random-overlay') closeRandomOverlay();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeRandomOverlay();
+            if (viewMode === 'single') {
+                if (e.key === 'ArrowRight') nextSingleCard();
+                if (e.key === 'ArrowLeft') prevSingleCard();
+            }
+        });
+
+        // Запуск при загрузке
+        window.onload = renderView;
+    </script>
+</body>
+</html>
